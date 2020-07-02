@@ -3,21 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MapEditor"
+        xmlns:wpfSfmlHost="clr-namespace:WpfSfmlHost"
         mc:Ignorable="d"
         Title="Map Editor" Height="450" Width="700">
-
-    <Window.Resources>
-        <Style TargetType="{x:Type Button}" x:Key="ImageButtonStyle">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <ContentPresenter/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -95,9 +83,12 @@
                 </Grid>
 
                 <TextBlock Text="Tileset" Margin="0 5" FontWeight="Bold"/>
-                <Button Style="{StaticResource ImageButtonStyle}" Click="SelectTile_Click" x:Name="TilesetImageButton" Height="100">
-                    <Image x:Name="TilesetImage"/>
-                </Button>
+                <WindowsFormsHost>
+                    <WindowsFormsHost.Child>
+                        <wpfSfmlHost:SfmlDrawingSurface x:Name="TilesetSurfaceUI"
+                                SizeChanged="DrawSurface_SizeChanged"/>
+                    </WindowsFormsHost.Child>
+                </WindowsFormsHost>
             </StackPanel>
         </Border>
         <Border Margin="5 0 0 0" Grid.Column="1">
@@ -118,9 +109,14 @@
                     <Button Margin="1 5" Grid.Column="2" Content="Hitbox"/>
                     <TextBlock x:Name="selectedTileText" Margin="5 5" Grid.Column="3" Text="Tile not selected." />
                 </Grid>
-                <Button Click="ClickedOnMap" Style="{StaticResource ImageButtonStyle}" x:Name="MapImageButton" Grid.Row="1">
-                    <Image x:Name="MapImage" Grid.Row="1"/>
-                </Button>
+                <ScrollViewer HorizontalScrollBarVisibility="Visible" Grid.Row="1">
+                    <WindowsFormsHost>
+                        <WindowsFormsHost.Child>
+                            <wpfSfmlHost:SfmlDrawingSurface x:Name="MapSurfaceUI"
+                                SizeChanged="DrawSurface_SizeChanged"/>
+                        </WindowsFormsHost.Child>
+                    </WindowsFormsHost>
+                </ScrollViewer>
             </Grid>
         </Border>
     </Grid>

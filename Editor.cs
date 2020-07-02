@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Media.Imaging;
+using SFML.Graphics;
 
 namespace MapEditor
 {
@@ -16,14 +17,14 @@ namespace MapEditor
         private int _selectedTile;
         public int selectedTile { get => _selectedTile; set { if (value >= 0)  { _selectedTile = value; } } }
 
-        public BitmapImage baseTileset;
-        public BitmapImage topTileset;
+        public Texture baseTileset;
+        public Texture topTileset;
 
-        public int baseTilesetColumns { get => baseTileset.PixelWidth / TileSize; }
-        public int baseTilesetRows { get => baseTileset.PixelHeight / TileSize; }
+        public int baseTilesetColumns { get => (int)baseTileset.Size.X / TileSize; }
+        public int baseTilesetRows { get => (int)baseTileset.Size.Y / TileSize; }
 
-        public int topTilesetColumns { get => topTileset.PixelWidth / TileSize; }
-        public int topTilesetRows { get => topTileset.PixelHeight / TileSize; }
+        public int topTilesetColumns { get => (int)baseTileset.Size.X / TileSize; }
+        public int topTilesetRows { get => (int)baseTileset.Size.Y / TileSize; }
 
         public List<int> baseTiles = new List<int>();
         public List<int> topTiles = new List<int>();

@@ -8,113 +8,104 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Navigation;
 using Microsoft.Win32;
 using System.Text.RegularExpressions;
-using System.Drawing;
 using System.IO;
+using SFML.Graphics;
+using SFML.Window;
 
 namespace MapEditor
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         public MainWindow()
         {
             InitializeComponent();
+            CreateRenderWindows();
             UpdateMapPreview();
         }
 
-
+        RenderWindow mapWindow;
+        RenderWindow tilesetWindow;
         Editor edt = new Editor();
+
+        private void CreateRenderWindows()
+        {
+            {
+                
+                if (MapSurfaceUI == null)
+                    MapSurfaceUI = new WpfSfmlHost.SfmlDrawingSurface();
+
+                var context = new ContextSettings { DepthBits = 24 };
+                this.mapWindow = new RenderWindow(this.MapSurfaceUI.Handle, context);
+                this.mapWindow.SetActive(true);
+            }
+
+            {
+                
+                if (TilesetSurfaceUI == null)
+                    TilesetSurfaceUI = new WpfSfmlHost.SfmlDrawingSurface();
+
+                var context = new ContextSettings { DepthBits = 24 };
+                this.tilesetWindow = new RenderWindow(this.TilesetSurfaceUI.Handle, context);
+                this.tilesetWindow.SetActive(true);
+            }
+            
+        }
+
+
 
         private void UpdateMapPreview()
         {
-            if (true)
+            RectangleShape shape = new RectangleShape() { Position = new SFML.System.Vector2f(10, 10) ,Size = new SFML.System.Vector2f(30, 30) };
+            shape.FillColor = new Color(255, 0, 0, 255);
+            mapWindow.Clear();
+            mapWindow.Draw(shape);
+            
+            if (edt.baseTileset != null && ShowBaseCheckBox.IsChecked == true)
             {
-                Bitmap mapPreview = new Bitmap(edt.TileSize * edt.MapWidth, edt.TileSize * edt.MapHeight);
-                if (edt.baseTileset != null && ShowBaseCheckBox.IsChecked == true)
+                for (int y = 0; y < edt.MapHeight; y++)
                 {
-                    Bitmap tilemapBitmap = BitmapImage2Bitmap(edt.baseTileset);
-
-                    for (int y = 0; y < edt.MapHeight; y++)
+                    for (int x = 0; x < edt.MapWidth; x++)
                     {
-                        for (int x = 0; x < edt.MapWidth; x++)
-                        {
-                            int selectedX = edt.TileSize * (edt.baseTiles[x + y * edt.MapWidth] % edt.baseTilesetColumns);
-                            int selectedY = edt.TileSize * (edt.baseTiles[x + y * edt.MapWidth] / edt.baseTilesetColumns);
-                            CopyRegionIntoImage(tilemapBitmap, new Rectangle(selectedX, selectedY, edt.TileSize, edt.TileSize), ref mapPreview, new Rectangle(x * edt.TileSize, y * edt.TileSize, edt.TileSize, edt.TileSize));
-                        }
+                        int selectedX = edt.TileSize * (edt.baseTiles[x + y * edt.MapWidth] % edt.baseTilesetColumns);
+                        int selectedY = edt.TileSize * (edt.baseTiles[x + y * edt.MapWidth] / edt.baseTilesetColumns);
                     }
                 }
-                if (edt.topTileset != null && ShowTopCheckBox.IsChecked == true)
+            }
+            if (edt.topTileset != null && ShowTopCheckBox.IsChecked == true)
+            {
+                for (int y = 0; y < edt.MapHeight; y++)
                 {
-                    Bitmap tilemapBitmap = BitmapImage2Bitmap(edt.topTileset);
-
-                    for (int y = 0; y < edt.MapHeight; y++)
+                    for (int x = 0; x < edt.MapWidth; x++)
                     {
-                        for (int x = 0; x < edt.MapWidth; x++)
-                        {
-                            int selectedX = edt.TileSize * (edt.topTiles[x + y * edt.MapWidth] % edt.topTilesetColumns);
-                            int selectedY = edt.TileSize * (edt.topTiles[x + y * edt.MapWidth] / edt.topTilesetColumns);
-                            CopyRegionIntoImage(tilemapBitmap, new Rectangle(selectedX, selectedY, edt.TileSize, edt.TileSize), ref mapPreview, new Rectangle(x * edt.TileSize, y * edt.TileSize, edt.TileSize, edt.TileSize));
-                        }
+                        int selectedX = edt.TileSize * (edt.baseTiles[x + y * edt.MapWidth] % edt.baseTilesetColumns);
+                        int selectedY = edt.TileSize * (edt.baseTiles[x + y * edt.MapWidth] / edt.baseTilesetColumns);
+
                     }
                 }
-
-                if (MapImage != null)
-                {
-                    MapImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                                       mapPreview.GetHbitmap(),
-                                        IntPtr.Zero,
-                                        Int32Rect.Empty,
-                                        BitmapSizeOptions.FromWidthAndHeight(edt.TileSize * edt.MapWidth, edt.TileSize * edt.MapHeight));
-                }
             }
-            MessageBox.Show("XD");
-        }
-
-        private Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
-        {
-            using (MemoryStream outStream = new MemoryStream())
-            {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-
-                return new Bitmap(bitmap);
-            }
-        }
-
-        private static void CopyRegionIntoImage(Bitmap srcBitmap, Rectangle srcRegion, ref Bitmap destBitmap, Rectangle destRegion)
-        {
-           using (Graphics grD = Graphics.FromImage(destBitmap))
-           {
-                grD.DrawImage(srcBitmap, destRegion, srcRegion, GraphicsUnit.Pixel);
-           }
+            mapWindow.Display();
         }
 
         private void ButtonLoadBaseTileset_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Tilemaps (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
-            Nullable<bool> result = openFileDialog.ShowDialog();
-            
+            openFileDialog.ShowDialog();
+
             if (openFileDialog.FileName != "")
             {
                 Uri imageUri = new Uri(openFileDialog.FileName);
-                edt.baseTileset = new BitmapImage(new Uri(openFileDialog.FileName));
+                MessageBox.Show(imageUri.LocalPath);
+                edt.baseTileset = new Texture(imageUri.LocalPath);
 
-                if (edt.baseTileset.PixelWidth % edt.TileSize == 0 && edt.baseTileset.PixelHeight % edt.TileSize == 0 && edt.TileSize > 0)
-                {
-                    TilesetImage.Source = edt.baseTileset;
-                }
-                else
+                if (edt.baseTileset.Size.X % edt.TileSize != 0 || edt.baseTileset.Size.Y % edt.TileSize != 0 || edt.TileSize <= 0)
                 {
                     MessageBox.Show("Invalid tile size for this image. Tileset size not divisible by tile size", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     edt.baseTileset = null;
@@ -132,13 +123,9 @@ namespace MapEditor
             if (openFileDialog.FileName != "")
             {
                 Uri imageUri = new Uri(openFileDialog.FileName);
-                edt.topTileset = new BitmapImage(new Uri(openFileDialog.FileName));
+                edt.baseTileset = new Texture(imageUri.AbsoluteUri);
 
-                if (edt.topTileset.PixelWidth % edt.TileSize == 0 && edt.topTileset.PixelHeight % edt.TileSize == 0 && edt.TileSize > 0)
-                {
-                    TilesetImage.Source = edt.topTileset;
-                }
-                else
+                if (edt.topTileset.Size.X % edt.TileSize != 0 || edt.topTileset.Size.Y % edt.TileSize != 0 || edt.TileSize <= 0)
                 {
                     MessageBox.Show("Invalid tile size for this image. Tileset size not divisible by tile size", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     edt.topTileset = null;
@@ -147,10 +134,14 @@ namespace MapEditor
             UpdateMapPreview();
         }
 
+        private int MousePos2SelectedTile(Point mousePos, float TilesetWidth, float TilesetHeight)
+        {
+            return Convert.ToInt32(Math.Floor((mousePos.X / TilesetWidth) * edt.baseTilesetColumns))
+             + Convert.ToInt32(Math.Floor((mousePos.Y / TilesetHeight) * edt.baseTilesetRows)) * edt.baseTilesetColumns;
+        }
         private void SelectTile_Click(object sender, RoutedEventArgs e)
         {
-            edt.selectedTile = Convert.ToInt32(Math.Floor((Mouse.GetPosition(TilesetImage).X / TilesetImage.ActualWidth) * edt.baseTilesetColumns))
-             + Convert.ToInt32(Math.Floor((Mouse.GetPosition(TilesetImage).Y / TilesetImage.ActualHeight) * edt.baseTilesetRows)) * edt.baseTilesetColumns;
+            edt.selectedTile = MousePos2SelectedTile(System.Windows.Input.Mouse.GetPosition(this), 1, 1);
             selectedTileText.Text = "Selected Tile: " + edt.selectedTile.ToString();
         }
 
@@ -185,11 +176,15 @@ namespace MapEditor
 
         private void ClickedOnMap(object sender, RoutedEventArgs e)
         {
-            edt.baseTiles[Convert.ToInt32(Math.Floor((Mouse.GetPosition(MapImage).X / MapImage.ActualWidth) * edt.MapWidth))
-             + Convert.ToInt32(Math.Floor((Mouse.GetPosition(MapImage).Y / MapImage.ActualHeight) * edt.MapHeight)) * edt.MapWidth] = edt.selectedTile;
+            
             UpdateMapPreview();
         }
 
         private void UpdateCheckBoxes(object sender, RoutedEventArgs e) => UpdateMapPreview();
+
+        private void DrawSurface_SizeChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
