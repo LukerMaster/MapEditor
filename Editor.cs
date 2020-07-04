@@ -14,6 +14,8 @@ namespace MapEditor
         }
 
         private int _selectedTile;
+        public int SelectedLayer { get; set; } = 0;
+
         public int selectedTile { get => _selectedTile; set { if (value >= 0)  { _selectedTile = value; } } }
 
         public BitmapImage baseTileset;

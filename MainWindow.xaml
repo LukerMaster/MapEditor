@@ -18,112 +18,125 @@
             </Setter>
         </Style>
     </Window.Resources>
-
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ToolBar>
+            <Menu>
+                <MenuItem Header="Map file">
+                    <MenuItem Header="Load Base Map File..." Click="LoadBaseMapFile"/>
+                    <MenuItem Header="Load Top Map File..." Click="LoadTopMapFile"/>
+                    <MenuItem Header="Load Hitbox Map File..." Click="LoadHitboxMapFile"/>
+                    <Separator/>
+                    <MenuItem Header="Save Current Map" Click="SaveMap"/>
+                </MenuItem>
+            </Menu>
+        </ToolBar>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <Border Margin="5 0 0 0" Grid.Column="0">
-            <StackPanel>
-                <TextBlock Text="Main Options" Margin="0 0 0 10" FontWeight="Bold"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Button Margin="5 0 5 5" Grid.Column="0" Grid.Row="0" Content="Load Base Tileset" Click="ButtonLoadBaseTileset_Click"/>
-                    <Button Margin="5 0 5 5" Grid.Column="0" Grid.Row="1" Content="Load Top Tileset" Click="ButtonLoadTopTileset_Click"/>
-                    <Button Margin="5 0 5 5" Grid.Column="0" Grid.Row="2" Content="Load Map File"/>
-                    <Button Margin="5 0 5 5" Grid.Column="1" Grid.Row="0" Content="Save Full Map"/>
-                    <Button Margin="5 0 5 5" Grid.Column="1" Grid.Row="1" Content="Save Only Hitboxes"/>
-                    <Button Margin="5 0 5 5" Grid.Column="1" Grid.Row="2" Content="Reset Layer"/>
-                </Grid>
+            <Border Margin="5 0 0 0" Grid.Column="0">
+                <StackPanel Margin="0,0,0,0">
+                    <TextBlock Text="Main Options" Margin="0 0 0 10" FontWeight="Bold"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Margin="5 0 5 5" Grid.Column="0" Grid.Row="0" Content="Load Base Tileset..." Click="ButtonLoadBaseTileset_Click"/>
+                        <Button Margin="5 0 5 5" Grid.Column="1" Grid.Row="0" Content="Load Top Tileset..." Click="ButtonLoadTopTileset_Click"/>
+
+                    </Grid>
                 
-                <TextBlock Text="Map name" Margin="0 5 0 0"/>
-                <TextBox x:Name="MapName" Text="Default Map 1" Padding="2" />
+                    <TextBlock Text="Map name" Margin="0 5 0 0"/>
+                    <TextBox x:Name="MapName" Text="Default Map 1" Padding="2" />
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="MapSizeLabel" Grid.Column="0" Grid.Row="0" Text="Map Size: 20x20" Margin="0 5 0 0"/>
-                    <TextBlock x:Name="TileSizeLabel" Grid.Column="3" Grid.Row="0" Text="Tile Size: 32" Margin="2 5 0 0"/>
-                </Grid>
-
-                
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="MapSizeLabel" Grid.Column="0" Grid.Row="0" Text="Map Size: 20x20" Margin="0 5 0 0"/>
+                        <TextBlock x:Name="TileSizeLabel" Grid.Column="3" Grid.Row="0" Text="Tile Size: 32" Margin="2 5 0 0"/>
+                    </Grid>
 
                 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
+
+                
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
                     
-                    <TextBox x:Name="MapSizeX" Text="20" Grid.Row="1" Padding="2" Grid.Column="0" Margin="0 0 1 0"/>
-                    <TextBox x:Name="MapSizeY" Text="20" Grid.Row="1" Padding="2" Grid.Column="1" Margin="1 0 2 0"/>
-                    <TextBox x:Name="TileSize" Text="32" Grid.Row="1" Padding="2" Grid.Column="2" Margin="2,0,0,0"/>
-                </Grid>
-                <Button Click="ApplySizes_Click" Margin="0 2" Content="Apply"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <CheckBox x:Name="ShowBaseCheckBox" IsChecked="True" Margin="0 2" Grid.Column="0" Grid.Row="0" Content="Show Base" Checked="UpdateCheckBoxes" Unchecked="UpdateCheckBoxes"/>
-                    <CheckBox x:Name="ShowTopCheckBox" IsChecked="True" Margin="0 2" Grid.Column="0" Grid.Row="1" Content="Show Top" Checked="UpdateCheckBoxes" Unchecked="UpdateCheckBoxes"/>
-                    <CheckBox Margin="0 2" Grid.Column="0" Grid.Row="2" Content="Highlight Hitboxes"/>
-                    <RadioButton Margin="0 2" Grid.Column="1" Grid.Row="0" IsChecked="True" Content="Brush"/>
-                    <RadioButton Margin="0 2" Grid.Column="1" Grid.Row="1" Content="Fill (Everything)"/>
-                </Grid>
+                        <TextBox x:Name="MapSizeX" Text="20" Grid.Row="1" Padding="2" Grid.Column="0" Margin="0 0 1 0"/>
+                        <TextBox x:Name="MapSizeY" Text="20" Grid.Row="1" Padding="2" Grid.Column="1" Margin="1 0 2 0"/>
+                        <TextBox x:Name="TileSize" Text="32" Grid.Row="1" Padding="2" Grid.Column="2" Margin="2,0,0,0"/>
+                    </Grid>
+                    <Button Click="ApplySizes_Click" Margin="0 2" Content="Apply (Resets map)"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <CheckBox x:Name="UIShowBaseCheckBox" IsChecked="True" Margin="0 2" Grid.Column="0" Grid.Row="0" Content="Show Base" Checked="UpdateCheckBoxes" Unchecked="UpdateCheckBoxes"/>
+                        <CheckBox x:Name="UIShowTopCheckBox" IsChecked="True" Margin="0 2" Grid.Column="0" Grid.Row="1" Content="Show Top" Checked="UpdateCheckBoxes" Unchecked="UpdateCheckBoxes"/>
+                        <CheckBox x:Name="UIShowHitboxesCheckBox" Margin="0 2" Grid.Column="0" Grid.Row="2" Content="Highlight Hitboxes" Checked="UpdateCheckBoxes" Unchecked="UpdateCheckBoxes"/>
+                        <RadioButton Margin="0 2" Grid.Column="1" Grid.Row="0" IsChecked="True" Content="Brush" x:Name="PlacerBrush"/>
+                        <RadioButton Margin="0 2" Grid.Column="1" Grid.Row="1" Content="Fill (Everything)" x:Name="PlacerFill"/>
+                    </Grid>
 
-                <TextBlock Text="Tileset" Margin="0 5" FontWeight="Bold"/>
-                <Button Style="{StaticResource ImageButtonStyle}" Click="SelectTile_Click" x:Name="TilesetImageButton" Height="100">
-                    <Image x:Name="TilesetImage"/>
-                </Button>
-            </StackPanel>
-        </Border>
-        <Border Margin="5 0 0 0" Grid.Column="1">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                    <TextBlock Text="Tileset selection:" Margin="0 5" FontWeight="Bold"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Margin="1 2" Grid.Column="0" Content="Base" Click="UseBaseClick"/>
+                        <Button Margin="1 2" Grid.Column="1" Content="Top" Click="UseTopClick"/>
+                        <Button Margin="1 2" Grid.Column="2" Content="Hitbox" Click="UseHitboxClick"/>
+                    </Grid>
+                
+                    <TextBlock x:Name="selectedTileText" Margin="5 1" Grid.Column="3" Text="Tile not selected." />
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Auto">
+                        <Button Style="{StaticResource ImageButtonStyle}" Click="SelectTile_Click" x:Name="TilesetImageButton" MaxHeight="250">
+                            <Image x:Name="TilesetImage"/>
+                        </Button>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+            <Border Margin="5 0 0 0" Grid.Column="1">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Margin="1 5" Grid.Column="0" Content="Base"/>
-                    <Button Margin="1 5" Grid.Column="1" Content="Top"/>
-                    <Button Margin="1 5" Grid.Column="2" Content="Hitbox"/>
-                    <TextBlock x:Name="selectedTileText" Margin="5 5" Grid.Column="3" Text="Tile not selected." />
+                    <ScrollViewer HorizontalScrollBarVisibility="Visible" Grid.Row="1" x:Name="ScrollView">
+                        <Button Style="{StaticResource ImageButtonStyle}" Click="PlaceTile_Click" x:Name="UIMapButton">
+                            <Grid>
+                                <Canvas x:Name="UIBaseMapCanvas"/>
+                                <Canvas x:Name="UITopMapCanvas"/>
+                                <Canvas x:Name="UIHitboxMapCanvas" Visibility="Hidden"/>
+                            </Grid>
+                        </Button>
+                    </ScrollViewer>
+                
                 </Grid>
-                <Button Click="ClickedOnMap" Style="{StaticResource ImageButtonStyle}" x:Name="MapImageButton" Grid.Row="1">
-                    <Image x:Name="MapImage" Grid.Row="1"/>
-                </Button>
-            </Grid>
-        </Border>
+            </Border>
+        </Grid>
+
     </Grid>
-    
-    
+
 </Window>
